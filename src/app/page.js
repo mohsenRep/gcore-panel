@@ -28,7 +28,6 @@ export default function Dashboard() {
           api.getAccountInfo(),
           api.getMonthlyTraffic()
         ]);
-        console.log(accountInfo);
 
         return {
           id: keyData.id,
@@ -53,7 +52,8 @@ export default function Dashboard() {
     });
 
     const accountsData = await Promise.all(accountPromises);
-    setAccounts(accountsData);
+    const sortedDesc = [...accountsData].sort((a, b) => b.trafficUsed - a.trafficUsed);
+    setAccounts(sortedDesc);
     setLoading(false);
     setRefreshing(false);
   };
