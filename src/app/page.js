@@ -5,7 +5,7 @@ import Link from 'next/link';
 import AccountCard from '../components/AccountCard';
 import { storageUtils } from '../lib/storage';
 import { GCoreAPI } from '../lib/gcore-api';
-import { getCurrentMonthName } from '../utils/formatters';
+import { formatBytes, getCurrentMonthName } from '../utils/formatters';
 
 export default function Dashboard() {
   const [accounts, setAccounts] = useState([]);
@@ -31,7 +31,7 @@ export default function Dashboard() {
 
         return {
           id: keyData.id,
-          name: accountInfo[0].email,
+          name: accountInfo.account[0].email,
           status: 'active',
           trafficUsed: trafficInfo.used || 0,
           trafficLimit: trafficInfo.limit || 0,
@@ -182,7 +182,7 @@ export default function Dashboard() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Usage %</p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalTrafficLimit > 0 ? Math.round((totalTrafficUsed / totalTrafficLimit) * 100) : 0}%
+                {formatBytes(totalTrafficUsed)}
               </p>
             </div>
           </div>

@@ -44,7 +44,11 @@ class GCoreAPI {
     async getAccountInfo() {
         try {
             // Placeholder - will be updated with actual endpoint
-            return await this.makeRequest('/iam/users');
+            const account = await this.makeRequest('/iam/users');
+            
+            const origins = await this.makeRequest('/cdn/origin_groups?has_related_resources=true');
+
+            return { account, origins };
         } catch (error) {
             throw new Error(`Failed to fetch account info: ${error.message}`);
         }
@@ -54,12 +58,15 @@ class GCoreAPI {
     async getMonthlyTraffic() {
         try {
             const now = new Date();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const firstDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1, 0, 0, 0));
+
+            // Format in ISO 8601 (RFC 3339 compliant)
+            const isoString = firstDayUTC.toISOString();
 
             // Placeholder - will be updated with actual endpoint and date parameters
             const params = new URLSearchParams({
                 service: 'CDN',
-                from: startOfMonth.toISOString(),
+                from: isoString,
                 to: now.toISOString(),
                 granularity: '1d',
                 metrics: 'total_bytes'
@@ -70,10 +77,10 @@ class GCoreAPI {
 
 
             // تبدیل به GB (دهدهی)
-            const totalGB = totalBytes / 1e9;
+            // const totalGB = totalBytes / 1e9;
 
 
-            return { limit: 1000, used: totalGB };
+            return { limit: 1000000000000, used: totalBytes };
         } catch (error) {
             throw new Error(`Failed to fetch monthly traffic: ${error.message}`);
         }
